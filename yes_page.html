@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Я знал что ты скажешь да</title>
+    <link rel="stylesheet" href="./yes_style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="header_text">Я знал что ты скажешь да, YAY!</h1>
+        <div class="gif_container">
+            <video id="myVideo" autoplay loop playsinline controls>
+                <source src="valentin.mp4" type="video/mp4">
+                Ваш браузер не поддерживает видео.
+            </video>
+        </div>
+    </div>
+
+    <!-- Плавающая кнопка -->
+    <a href="https://t.me/+2aNTYPlSykYyYzZk" target="_blank" class="floating-button" id="floatingBtn">Тык</a>
+
+    <script>
+        // Автоматическое воспроизведение видео
+        document.body.addEventListener('click', function() {
+            const video = document.getElementById('myVideo');
+            if (video.paused) {
+                video.play().catch(e => console.log("Ошибка воспроизведения видео:", e));
+            }
+        }, { once: true });
+
+        // Перемещение кнопки
+        const floatingBtn = document.getElementById('floatingBtn');
+        let posX, posY;
+        
+        // Начальная случайная позиция
+        function setRandomPosition() {
+            posX = Math.random() * (window.innerWidth - floatingBtn.offsetWidth - 40) + 20;
+            posY = Math.random() * (window.innerHeight - floatingBtn.offsetHeight - 40) + 20;
+            
+            floatingBtn.style.left = posX + 'px';
+            floatingBtn.style.top = posY + 'px';
+        }
+        
+        // Устанавливаем начальную позицию
+        setRandomPosition();
+        
+        // Меняем позицию каждые 2 секунды
+        setInterval(setRandomPosition, 2000);
+        
+        // Обновляем позицию при изменении размера окна
+        window.addEventListener('resize', setRandomPosition);
+    </script>
+    <script src="hearts.js"></script>
+</body>
+</html>
