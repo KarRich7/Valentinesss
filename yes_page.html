@@ -10,8 +10,10 @@
     <div class="container">
         <h1 class="header_text">Я знал что ты скажешь да, YAY!</h1>
         <div class="gif_container">
-            <video id="myVideo" autoplay loop playsinline controls>
-                <source src="valentin.mp4" type="video/mp4">
+            <!-- Убрал autoplay, добавил preload и запасные форматы -->
+            <video id="myVideo" controls playsinline preload="metadata">
+                <source src="./valentin.mp4" type="video/mp4">
+                <source src="./valentin.webm" type="video/webm">
                 Ваш браузер не поддерживает видео.
             </video>
         </div>
@@ -21,13 +23,43 @@
     <a href="https://t.me/+2aNTYPlSykYyYzZk" target="_blank" class="floating-button" id="floatingBtn">Тык</a>
 
     <script>
-        // Автоматическое воспроизведение видео
-        document.body.addEventListener('click', function() {
-            const video = document.getElementById('myVideo');
-            if (video.paused) {
-                video.play().catch(e => console.log("Ошибка воспроизведения видео:", e));
+        // Улучшенная обработка видео
+        const video = document.getElementById('myVideo');
+        
+        // Показываем сообщение, если видео не загрузилось
+        video.addEventListener('error', function(e) {
+            console.error('Ошибка загрузки видео:', video.error);
+            const container = document.querySelector('.gif_container');
+            container.innerHTML = `
+                <div style="padding: 20px; text-align: center; color: #d32f2f;">
+                    <p>Видео не загрузилось 😢</p>
+                    <p>Проверьте, что файл <strong>valentin.mp4</strong> загружен в репозиторий</p>
+                    <p>Путь: ${video.querySelector('source').src}</p>
+                </div>
+            `;
+        });
+        
+        // Когда видео загружено, предлагаем воспроизвести
+        video.addEventListener('loadeddata', function() {
+            console.log('Видео загружено');
+            // Пытаемся воспроизвести при клике где угодно
+            document.addEventListener('click', function playVideo() {
+                if (video.paused) {
+                    video.play().catch(e => {
+                        console.log('Автовоспроизведение заблокировано');
+                        video.controls = true;
+                    });
+                    document.removeEventListener('click', playVideo);
+                }
+            });
+        });
+        
+        // Если видео не загружается через 3 секунды, показываем ошибку
+        setTimeout(() => {
+            if (video.readyState < 2) { // HAVE_CURRENT_DATA
+                console.warn('Видео все еще загружается...');
             }
-        }, { once: true });
+        }, 3000);
 
         // Перемещение кнопки
         const floatingBtn = document.getElementById('floatingBtn');
@@ -43,6 +75,7 @@
         }
         
         // Устанавливаем начальную позицию
+        floatingBtn.style.position = 'fixed';
         setRandomPosition();
         
         // Меняем позицию каждые 2 секунды
@@ -51,6 +84,6 @@
         // Обновляем позицию при изменении размера окна
         window.addEventListener('resize', setRandomPosition);
     </script>
-    <script src="hearts.js"></script>
+    <script src="./hearts.js"></script>
 </body>
 </html>
